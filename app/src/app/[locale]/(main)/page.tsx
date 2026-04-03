@@ -38,7 +38,7 @@ export default async function DashboardPage() {
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="border-2 border-green-200 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <div className="hidden sm:flex w-16 h-16 bg-green-100 rounded-full items-center justify-center">
               <span className="text-2xl font-bold text-green-600">A</span>
             </div>
             <h2 className="text-2xl font-bold text-slate-800">{t("akkusativ")}</h2>
@@ -52,7 +52,7 @@ export default async function DashboardPage() {
 
         <Card className="border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="hidden sm:flex w-16 h-16 bg-blue-100 rounded-full items-center justify-center">
               <span className="text-2xl font-bold text-blue-600">D</span>
             </div>
             <h2 className="text-2xl font-bold text-slate-800">{t("dativ")}</h2>

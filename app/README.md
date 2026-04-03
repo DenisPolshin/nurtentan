@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Доступ к серверу (SSH)
+
+Прямой доступ на сервер (VPS) по SSH под root:
+
+```bash
+ssh -i %USERPROFILE%\.ssh\id_ed25519 -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121
+```
+
 ## Getting Started
 
 First, run the development server:
