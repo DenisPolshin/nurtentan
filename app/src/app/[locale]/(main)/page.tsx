@@ -29,7 +29,7 @@ export default async function DashboardPage() {
   const progressPercentage = sentencesCount > 0 ? (totalPoints / sentencesCount) * 100 : 0;
 
   return (
-    <div className="space-y-4 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-4 sm:space-y-8 pb-28 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-center space-y-1 sm:space-y-2">
         <h1 className="text-2xl sm:text-4xl font-bold text-slate-800">{t("title")}</h1>
         <p className="text-slate-500 text-sm sm:text-lg">{t("subtitle")}</p>
@@ -65,20 +65,24 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="border-2 border-slate-200 shadow-sm bg-slate-50/50">
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-2 sm:mb-4">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-800">{t("progress")}</h3>
-            <span className="text-sm sm:text-base text-slate-500 font-medium">{totalPoints} / {sentencesCount} {t("sentences_learned")}</span>
-          </div>
-          <div className="h-3 sm:h-4 w-full bg-slate-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-yellow-400 rounded-full transition-all duration-1000" 
-              style={{ width: `${progressPercentage}%` }}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="fixed inset-x-0 bottom-0 z-40 sm:static">
+        <div className="mx-auto w-full max-w-4xl px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:px-0 sm:pb-0">
+          <Card className="border-2 border-slate-200 shadow-sm bg-slate-50/95 backdrop-blur-sm">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-2 sm:mb-4">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-800">{t("progress")}</h3>
+                <span className="text-sm sm:text-base text-slate-500 font-medium">{totalPoints} / {sentencesCount} {t("sentences_learned")}</span>
+              </div>
+              <div className="h-3 sm:h-4 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-yellow-400 rounded-full transition-all duration-1000"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
