@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+app/node_modules/
+.next/
+app/.next/
+build/
+dist/
+*.tar.gz
+.env
+.env.*
+app/.env
+logs/
+*.db
+*.db-journal
+.trae/
+.vscode/
+.idea/

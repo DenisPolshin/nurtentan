@@ -1,0 +1,32 @@
+{
+  "Common": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "start": "Starten",
+    "check": "Prüfen",
+    "continue": "Weiter",
+    "correct": "Richtig!",
+    "incorrect": "Falsch",
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "email_exists": "Ein Benutzer mit dieser E-Mail-Adresse existiert bereits"
+  },
+  "Dashboard": {
+    "title": "Lerne Deutsche Verben",
+    "subtitle": "Wähle eine Kategorie, um zu beginnen",
+    "akkusativ": "Verben mit Akkusativ",
+    "dativ": "Verben mit Dativ",
+    "mixed": "Gemischt",
+    "progress": "Dein Fortschritt",
+    "verbs_learned": "Gelernte Verben",
+    "sentences_learned": "Gelernte Sätze"
+  },
+  "Lesson": {
+    "fill_blanks": "Fülle die Lücken aus",
+    "choose_verb": "Wähle das richtige Verb",
+    "choose_prep": "Wähle die richtige Präposition",
+    "lesson_complete": "Lektion abgeschlossen!",
+    "accuracy": "Genauigkeit",
+    "xp_earned": "XP gesammelt"
+  }
+}

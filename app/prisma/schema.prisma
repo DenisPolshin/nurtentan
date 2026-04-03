@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // Hashed password for Credentials provider
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Custom fields
+  role          String   @default("USER") // USER, ADMIN
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  progress      UserProgress[]
+  reports       Report[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Verb {
+  id          String   @id @default(cuid())
+  infinitive  String   // e.g. "sich erinnern"
+  preposition String   // e.g. "an"
+  case        String   // "Akkusativ" or "Dativ"
+  translation String?  // Russian translation
+  
+  sentences   Sentence[]
+  progress    UserProgress[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Sentence {
+  id          String   @id @default(cuid())
+  verbId      String
+  verb        Verb     @relation(fields: [verbId], references: [id], onDelete: Cascade)
+  
+  text        String   // e.g. "Ich ____ ____ meine Kindheit." 
+  verbAnswer  String   // e.g. "erinnere mich"
+  prepAnswer  String   // e.g. "an"
+  translation String?  // e.g. "Я вспоминаю о своем детстве."
+
+  createdAt   DateTime @default(now())
+  reports     Report[]
+}
+
+model UserProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  verbId         String
+  verb           Verb     @relation(fields: [verbId], references: [id], onDelete: Cascade)
+  
+  timesPracticed Int      @default(0)
+  correctAnswers Int      @default(0)
+  isLearned      Boolean  @default(false)
+
+  lastPracticed  DateTime @default(now())
+  
+  @@unique([userId, verbId])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  sentenceId  String
+  sentence    Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  
+  userAnswer  String?  // What the user actually typed
+  status      String   @default("PENDING") // PENDING, RESOLVED, IGNORED
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
