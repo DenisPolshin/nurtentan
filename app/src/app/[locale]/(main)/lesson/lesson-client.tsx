@@ -30,6 +30,7 @@ type Question = {
   text: string;
   verbAnswer: string;
   prepAnswer: string;
+  verbOptions: string[];
   sentenceTranslation: string | null;
   sentenceId: string;
 };
@@ -37,10 +38,12 @@ type Question = {
 export function LessonClient({ 
   questions: initialQuestions, 
   allPrepositions,
+  isAdmin,
   t
 }: { 
   questions: Question[], 
   allPrepositions: string[],
+  isAdmin: boolean,
   t: any 
 }) {
   const router = useRouter();
@@ -56,7 +59,8 @@ export function LessonClient({
   const [verbInput, setVerbInput] = useState("");
   const [prepInput, setPrepInput] = useState("");
   const [status, setStatus] = useState<"idle" | "correct" | "incorrect">("idle");
-  const [options, setOptions] = useState<string[]>([]);
+  const [prepOptions, setPrepOptions] = useState<string[]>([]);
+  const [verbOptions, setVerbOptions] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [wrongAnsweredIds, setWrongAnsweredIds] = useState<Set<number>>(new Set());
   const [isReporting, setIsReporting] = useState(false);
@@ -69,14 +73,21 @@ export function LessonClient({
   useEffect(() => {
     if (currentIndex < queue.length) {
       const q = queue[currentIndex];
+      
+      // Setup prep options
       const correctPrep = q.prepAnswer;
-      
-      const distractors = allPrepositions.filter(p => p.toLowerCase() !== correctPrep.toLowerCase());
-      const shuffledDistractors = distractors.sort(() => Math.random() - 0.5);
-      const selectedDistractors = shuffledDistractors.slice(0, 6);
-      
-      const finalOptions = [correctPrep, ...selectedDistractors].sort(() => Math.random() - 0.5);
-      setOptions(finalOptions);
+      const prepDistractors = allPrepositions.filter(p => p.toLowerCase() !== correctPrep.toLowerCase());
+      const shuffledPrepDistractors = prepDistractors.sort(() => Math.random() - 0.5);
+      const selectedPrepDistractors = shuffledPrepDistractors.slice(0, 5);
+      const finalPrepOptions = [correctPrep, ...selectedPrepDistractors].sort(() => Math.random() - 0.5);
+      setPrepOptions(finalPrepOptions);
+
+      // Setup verb options
+      const correctVerb = q.verbAnswer;
+      const vOptions = Array.isArray(q.verbOptions) ? q.verbOptions : [];
+      const verbDistractors = vOptions.filter(v => v !== correctVerb).slice(0, 5);
+      const finalVerbOptions = [correctVerb, ...verbDistractors].sort(() => Math.random() - 0.5);
+      setVerbOptions(finalVerbOptions);
     }
   }, [currentIndex, queue, allPrepositions]);
 
@@ -283,12 +294,14 @@ export function LessonClient({
 
         <div className="space-y-8 md:space-y-12 pb-32 md:pb-10">
           <div className="flex flex-col items-start gap-5 md:gap-8">
-            <div className="relative">
-              <div className="bg-white rounded-xl md:rounded-2xl border-2 border-b-4 border-[#e5e5e5] p-2 md:p-3 px-4 md:px-5 text-base md:text-lg font-normal text-[#555555] shadow-sm">
-                {q.infinitive} + {q.preposition}
+            {isAdmin && (
+              <div className="relative">
+                <div className="bg-white rounded-xl md:rounded-2xl border-2 border-b-4 border-[#e5e5e5] p-2 md:p-3 px-4 md:px-5 text-base md:text-lg font-normal text-[#555555] shadow-sm">
+                  {q.infinitive} + {q.preposition}
+                </div>
+                <div className="absolute -bottom-2 left-8 w-3 h-3 bg-white border-r-2 border-b-2 border-[#e5e5e5] rotate-45" />
               </div>
-              <div className="absolute -bottom-2 left-8 w-3 h-3 bg-white border-r-2 border-b-2 border-[#e5e5e5] rotate-45" />
-            </div>
+            )}
             
             <div className="text-lg md:text-xl font-normal leading-relaxed flex flex-wrap items-center gap-x-2 md:gap-x-3 gap-y-3 md:gap-y-5 text-[#1a1a1a]">
               <span>{parts[0]}</span>
@@ -334,35 +347,62 @@ export function LessonClient({
             </div>
           </div>
 
-          {/* Options for Preposition */}
+          {/* Options for Verb and Preposition */}
           <AnimatePresence>
             {status === "idle" && (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="pt-4 md:pt-6 flex flex-wrap justify-center gap-2 md:gap-3"
+                className="flex flex-col gap-6"
               >
-                {options.map((p, idx) => (
-                  <motion.div
-                    key={`${currentIndex}-${p}-${idx}`}
-                    drag
-                    dragSnapToOrigin
-                    onDragStart={() => setIsDragging(true)}
-                    onDragEnd={(e, info) => onDragEnd(e, info, p)}
-                    whileHover={{ scale: 1.05 }}
-                    whileDrag={{ scale: 1.1, zIndex: 10 }}
-                    className="cursor-grab active:cursor-grabbing"
-                  >
-                    <Button 
-                      variant="outline" 
-                      className="rounded-lg md:rounded-xl h-10 md:h-12 px-4 md:px-6 border-2 border-b-4 border-[#e5e5e5] hover:bg-slate-50 text-base md:text-lg font-normal text-[#4b4b4b] transition-all active:border-b-2 active:translate-y-1 shadow-sm"
-                      onClick={() => setPrepInput(p)}
+                {/* Verb Options */}
+                <div className="pt-2 flex flex-wrap justify-center gap-2 md:gap-3">
+                  {verbOptions.map((v, idx) => (
+                    <motion.div
+                      key={`verb-${currentIndex}-${v}-${idx}`}
+                      drag
+                      dragSnapToOrigin
+                      onDragStart={() => setIsDragging(true)}
+                      onDragEnd={(e, info) => onDragEnd(e, info, v)}
+                      whileHover={{ scale: 1.05 }}
+                      whileDrag={{ scale: 1.1, zIndex: 10 }}
+                      className="cursor-grab active:cursor-grabbing"
                     >
-                      {p}
-                    </Button>
-                  </motion.div>
-                ))}
+                      <Button 
+                        variant="outline" 
+                        className="rounded-lg md:rounded-xl h-10 md:h-12 px-4 md:px-6 border-2 border-b-4 border-[#e5e5e5] hover:bg-slate-50 text-base md:text-lg font-normal text-[#4b4b4b] transition-all active:border-b-2 active:translate-y-1 shadow-sm"
+                        onClick={() => setVerbInput(v)}
+                      >
+                        {v}
+                      </Button>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Preposition Options */}
+                <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+                  {prepOptions.map((p, idx) => (
+                    <motion.div
+                      key={`prep-${currentIndex}-${p}-${idx}`}
+                      drag
+                      dragSnapToOrigin
+                      onDragStart={() => setIsDragging(true)}
+                      onDragEnd={(e, info) => onDragEnd(e, info, p)}
+                      whileHover={{ scale: 1.05 }}
+                      whileDrag={{ scale: 1.1, zIndex: 10 }}
+                      className="cursor-grab active:cursor-grabbing"
+                    >
+                      <Button 
+                        variant="outline" 
+                        className="rounded-lg md:rounded-xl h-10 md:h-12 px-4 md:px-6 border-2 border-b-4 border-[#e5e5e5] hover:bg-slate-50 text-base md:text-lg font-normal text-[#4b4b4b] transition-all active:border-b-2 active:translate-y-1 shadow-sm"
+                        onClick={() => setPrepInput(p)}
+                      >
+                        {p}
+                      </Button>
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

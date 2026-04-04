@@ -200,6 +200,50 @@ function fillSentence(text, verbAnswer, prepAnswer) {
   return text.replace("____", verbAnswer).replace("____", prepAnswer);
 }
 
+// Generate distractors logic
+function getVerbDistractors(correctAnswer, allSentences) {
+  // Extract all verbAnswers from all sentences
+  const allVerbAnswers = Array.from(new Set(allSentences.map(s => s.verbAnswer)));
+  
+  // Try to find verbs with the exact same ending/suffix pattern to be grammatically correct
+  // e.g. "erinnere mich" -> look for other verbs ending with "e mich"
+  // "freust" -> look for other verbs ending with "st"
+  
+  const tokens = correctAnswer.split(' ');
+  let pattern = '';
+  
+  if (tokens.length > 1) {
+    // "erinnere mich" -> "e mich"
+    const lastWord = tokens[tokens.length - 1]; // "mich"
+    const firstWord = tokens[0]; // "erinnere"
+    
+    if (firstWord.endsWith('st')) pattern = 'st ' + lastWord;
+    else if (firstWord.endsWith('t')) pattern = 't ' + lastWord;
+    else if (firstWord.endsWith('en')) pattern = 'en ' + lastWord;
+    else if (firstWord.endsWith('e')) pattern = 'e ' + lastWord;
+  } else {
+    // single word verb
+    if (correctAnswer.endsWith('st')) pattern = 'st';
+    else if (correctAnswer.endsWith('en')) pattern = 'en';
+    else if (correctAnswer.endsWith('t')) pattern = 't';
+    else if (correctAnswer.endsWith('e')) pattern = 'e';
+  }
+  
+  let candidates = [];
+  if (pattern) {
+    candidates = allVerbAnswers.filter(v => v !== correctAnswer && v.endsWith(pattern));
+  }
+  
+  // If not enough candidates with exact grammatical pattern, fallback to random
+  if (candidates.length < 5) {
+    const remaining = allVerbAnswers.filter(v => v !== correctAnswer && !candidates.includes(v));
+    candidates = [...candidates, ...remaining];
+  }
+  
+  // Shuffle and pick 5
+  return candidates.sort(() => Math.random() - 0.5).slice(0, 5);
+}
+
 function pickObjects(infinitive, prep, vCase) {
   const key = `${infinitive}|${prep}|${vCase}`;
 
@@ -1015,12 +1059,25 @@ async function main() {
     ...dativVerbs.map(([inf, prep]) => buildVerb(inf, prep, "Dativ"))
   ];
 
+  // Collect all sentences to generate distractors
+  const allSentences = verbs.flatMap(v => v.sentences);
+
   for (const v of verbs) {
     const { sentences, ...verbData } = v;
+    
+    // Add distractors to each sentence
+    const sentencesWithDistractors = sentences.map(s => {
+      const distractors = getVerbDistractors(s.verbAnswer, allSentences);
+      return {
+        ...s,
+        verbOptions: JSON.stringify(distractors)
+      };
+    });
+
     await prisma.verb.create({
       data: {
         ...verbData,
-        sentences: { create: sentences }
+        sentences: { create: sentencesWithDistractors }
       }
     });
   }

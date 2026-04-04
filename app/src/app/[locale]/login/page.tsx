@@ -154,16 +154,24 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side: Auth Forms */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-slate-50/50">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-12 bg-slate-50/50">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-[400px] space-y-8"
+          className="w-full max-w-[400px] flex flex-col justify-center h-full sm:h-auto"
         >
-          <div className="text-center md:text-left space-y-2">
-            <div className="md:hidden w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-200">
+          {/* Mobile Header Context */}
+          <div className="md:hidden flex flex-col items-center text-center mb-6 mt-2">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-3 shadow-lg shadow-green-200">
               <Languages className="w-7 h-7 text-white" />
             </div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">DeutschLernen</h1>
+            <p className="text-sm text-slate-500 leading-tight px-4">
+              Lerne alle 185 Verben mit Präpositionen. Gamified & Kostenlos.
+            </p>
+          </div>
+
+          <div className="hidden md:block text-left space-y-2 mb-8">
             <h2 className="text-3xl font-bold text-slate-900">
               {activeTab === "login" ? "Anmelden" : "Registrieren"}
             </h2>
@@ -261,9 +269,30 @@ export default function LoginPage() {
             </div>
           </Tabs>
 
-          <p className="text-center text-xs text-slate-400 px-8">
+          <p className="text-center text-xs text-slate-400 px-8 mt-6">
             Durch die Anmeldung akzeptierst du unsere Nutzungsbedingungen und Datenschutzrichtlinien.
           </p>
+
+          {/* Regional Logos */}
+          <div className="pt-6 pb-2 flex items-center justify-center gap-8">
+            <div className="flex flex-col items-center gap-2">
+              <img 
+                src="/Wappen_Crailsheim_Neu.svg" 
+                alt="Crailsheim Wappen" 
+                className="h-12 md:h-14 w-auto drop-shadow-sm" 
+              />
+              <span className="text-[9px] md:text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Crailsheim</span>
+            </div>
+            <div className="w-px h-10 bg-slate-200"></div>
+            <div className="flex flex-col items-center gap-2">
+              <img 
+                src="/Greater_coat_of_arms_of_Baden-W%C3%BCrttemberg.svg" 
+                alt="Baden-Württemberg Wappen" 
+                className="h-12 md:h-14 w-auto drop-shadow-sm" 
+              />
+              <span className="text-[9px] md:text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Baden-Württemberg</span>
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>

@@ -87,6 +87,7 @@ model Sentence {
   text        String   // e.g. "Ich ____ ____ meine Kindheit." 
   verbAnswer  String   // e.g. "erinnere mich"
   prepAnswer  String   // e.g. "an"
+  verbOptions String?  // JSON array of grammatically correct false options
   translation String?  // e.g. "Я вспоминаю о своем детстве."
 
   createdAt   DateTime @default(now())

@@ -44,6 +44,7 @@ export default async function LessonPage({
       text: s.text,
       verbAnswer: s.verbAnswer,
       prepAnswer: s.prepAnswer,
+      verbOptions: s.verbOptions ? JSON.parse(s.verbOptions) : [],
       sentenceTranslation: s.translation,
       sentenceId: s.id,
     }))
@@ -54,11 +55,14 @@ export default async function LessonPage({
     distinct: ['preposition'],
   });
   const allPrepositions = allPrepositionsData.map(p => p.preposition);
+  
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <LessonClient 
       questions={questions} 
       allPrepositions={allPrepositions}
+      isAdmin={isAdmin}
       t={{
         check: c("check"),
         continue: c("continue"),
