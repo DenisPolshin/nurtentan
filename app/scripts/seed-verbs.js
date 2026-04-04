@@ -309,7 +309,7 @@ function pickObjects(infinitive, prep, vCase) {
     "unterrichten|über|Akkusativ": ["das Thema", "die Regeln", "das Projekt", "den Plan", "die Geschichte"],
     "sich verlassen|auf|Akkusativ": ["meinen besten Freund", "dich", "mein Team", "mein Glück", "das Auto"],
     "sich verlieben|in|Akkusativ": ["einen Kollegen", "die Stadt", "das Land", "das Leben", "dich"],
-    "vermieten|an|Akkusativ": ["einen Studenten", "eine familie", "Touristen", "den Nachbarn", "einen Freund"],
+    "vermieten|an|Akkusativ": ["einen Studenten", "eine Familie", "Touristen", "den Nachbarn", "einen Freund"],
     "sich vertiefen|in|Akkusativ": ["ein spannendes Buch", "die Arbeit", "das Studium", "das Thema", "den Film"],
     "vertrauen|auf|Akkusativ": ["mein Bauchgefühl", "deine Hilfe", "den Erfolg", "das Glück", "die Zukunft"],
     "verzichten|auf|Akkusativ": ["den Nachtisch", "den Zucker", "das Auto", "den Urlaub", "den Wein"],
@@ -386,15 +386,15 @@ function pickObjects(infinitive, prep, vCase) {
     "schmecken|nach|Dativ": ["Erdbeeren", "Schokolade", "Zitrone", "Salz", "Zucker"],
     "schreiben|an|Dativ": ["dem Buch", "dem Bericht", "dem Brief", "dem Projekt", "der Hausarbeit"],
     "sehen|nach|Dativ": ["dem Rechten", "dem Weg", "dem Preis", "der Uhrzeit", "der Adresse"],
-    "sich sehnen|nach|Dativ": ["der Heimat", "der Ruhe", "dem Urlaub", "der familie", "dich"],
+    "sich sehnen|nach|Dativ": ["der Heimat", "der Ruhe", "dem Urlaub", "der Familie", "dir"],
     "sprechen|mit|Dativ": ["dem Lehrer", "dem Chef", "dem Freund", "der Mutter", "den Nachbarn"],
     "sprechen|von|Dativ": ["der Zukunft", "dem Urlaub", "der Arbeit", "dem Problem", "der Reise"],
     "sterben|an|Dativ": ["einer Krankheit", "dem Virus", "dem Fieber", "dem Alter", "einem Unfall"],
     "sich streiten|mit|Dativ": ["dem Nachbarn", "dem Chef", "dem Freund", "der Schwester", "dem Bruder"],
     "teilnehmen|an|Dativ": ["dem Kurs", "dem Projekt", "der Konferenz", "dem Wettbewerb", "dem Spiel"],
     "telefonieren|mit|Dativ": ["dem Freund", "dem Chef", "der Mutter", "dem Kunden", "der Bank"],
-    "träumen|von|Dativ": ["dem Urlaub", "einem Haus", "dem Erfolg", "der Zukunft", "dich"],
-    "sich treffen|mit|Dativ": ["dem Freund", "dem Chef", "der Kollegin", "den Nachbarn", "der familie"],
+    "träumen|von|Dativ": ["dem Urlaub", "einem Haus", "dem Erfolg", "der Zukunft", "dir"],
+    "sich treffen|mit|Dativ": ["dem Freund", "dem Chef", "der Kollegin", "den Nachbarn", "der Familie"],
     "sich trennen|von|Dativ": ["altem Spielzeug", "dem Partner", "der Arbeit", "der Wohnung", "dem Auto"],
     "überreden|zu|Dativ": ["einem Ausflug", "einem Kauf", "der Reise", "dem Projekt", "dem Essen"],
     "sich unterhalten|mit|Dativ": ["dem Freund", "dem Lehrer", "dem Chef", "der Kollegin", "den Nachbarn"],
@@ -452,19 +452,37 @@ function conjugate(infinitive, person, isModal = false) {
   }
 
   let stem = root;
-  if (infinitive === "sprechen" && (person === "Du" || person === "Er")) stem = "sprich";
-  if (infinitive === "sehen" && (person === "Du" || person === "Er")) stem = "sieh";
-  if (infinitive === "helfen" && (person === "Du" || person === "Er")) stem = "hilf";
-  if (infinitive === "laufen" && (person === "Du" || person === "Er")) stem = "läuf";
-  if (infinitive === "fahren" && (person === "Du" || person === "Er")) stem = "fähr";
-  if (infinitive === "halten" && (person === "Du" || person === "Er")) stem = "hält";
+  let hasVowelChange = false;
 
-  // If stem ends in d or t, add e before st and t
-  if ((stem.endsWith("d") || stem.endsWith("t")) && (person === "Du" || person === "Er")) {
-    return stem + "e" + endings[person];
+  if ((person === "Du" || person === "Er")) {
+    if (infinitive === "sprechen") { stem = "sprich"; hasVowelChange = true; }
+    else if (infinitive === "sehen") { stem = "sieh"; hasVowelChange = true; }
+    else if (infinitive === "helfen") { stem = "hilf"; hasVowelChange = true; }
+    else if (infinitive === "laufen") { stem = "läuf"; hasVowelChange = true; }
+    else if (infinitive === "fahren") { stem = "fähr"; hasVowelChange = true; }
+    else if (infinitive === "halten") { stem = "hält"; hasVowelChange = true; }
+    else if (infinitive === "raten") { stem = "rät"; hasVowelChange = true; }
+    else if (infinitive === "sich verlassen") { stem = "verläss"; hasVowelChange = true; }
   }
 
-  return stem + endings[person];
+  let ending = endings[person];
+
+  // Rule: s, ss, ß, z, x endings in "Du" -> only "t"
+  if (person === "Du" && (stem.endsWith("s") || stem.endsWith("ss") || stem.endsWith("ß") || stem.endsWith("z") || stem.endsWith("x"))) {
+    ending = "t";
+  }
+
+  // Rule: stem ends in d or t (and NO vowel change happened) -> add "e" before st and t
+  if (!hasVowelChange && (stem.endsWith("d") || stem.endsWith("t")) && (person === "Du" || person === "Er")) {
+    return stem + "e" + ending;
+  }
+
+  // Special case for Er with stem ending in t and vowel change (e.g. er hält, er rät)
+  if (hasVowelChange && stem.endsWith("t") && person === "Er") {
+    return stem; // already has the t
+  }
+
+  return stem + ending;
 }
 
 function getPartizip(infinitive) {
@@ -999,13 +1017,13 @@ function buildVerb(infinitive, preposition, vCase) {
   // 4: Modal Verb (müssen / Ich)
   const modalIch = conjugate("müssen", "Ich", true);
   const mObj = objs[3] || "das";
-  const fullVerb = `${particle || ""}${pureVerb}`;
+  const fullVerb = pureVerb; // Use pureVerb as it is already the full infinitive (e.g. "abstimmen")
   const mText = `Ich ${modalIch} ${isReflexive ? "mich" : ""} ____ ${mObj} ____.`.replace(/\s+/g, " ").trim();
   sentences.push({
     text: mText,
     verbAnswer: fullVerb,
     prepAnswer: preposition,
-    translation: fillSentence(mText, preposition, fullVerb)
+    translation: fillSentence(mText, preposition, fullVerb) // First blank is Prep, second is Verb
   });
 
   return {

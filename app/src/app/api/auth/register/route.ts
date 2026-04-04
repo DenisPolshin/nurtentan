@@ -7,12 +7,13 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().optional(),
+  nativeLanguage: z.string().optional(),
 });
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, name } = registerSchema.parse(body);
+    const { email, password, name, nativeLanguage } = registerSchema.parse(body);
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
         password: hashedPassword,
         name: name || email.split('@')[0],
         role,
+        nativeLanguage: nativeLanguage || "RU",
       },
     });
 

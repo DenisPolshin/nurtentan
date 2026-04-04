@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getTranslations } from "next-intl/server";
+import { LanguageSelector } from "./language-selector";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -12,6 +13,10 @@ export default async function DashboardPage() {
       redirect("/login");
   }
   const userId = session.user.id;
+
+  // Retrieve user to get native language
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { nativeLanguage: true } });
+  const nativeLanguage = user?.nativeLanguage || "RU";
 
   const t = await getTranslations("Dashboard");
   const c = await getTranslations("Common");
@@ -29,10 +34,17 @@ export default async function DashboardPage() {
   const progressPercentage = sentencesCount > 0 ? (totalPoints / sentencesCount) * 100 : 0;
 
   return (
-    <div className="space-y-4 sm:space-y-8 pb-28 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-4 sm:space-y-8 pb-28 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+      <div className="absolute top-0 right-0 z-10 hidden sm:block">
+        <LanguageSelector currentLanguage={nativeLanguage} />
+      </div>
+
       <div className="text-center space-y-1 sm:space-y-2">
         <h1 className="text-2xl sm:text-4xl font-bold text-slate-800">{t("title")}</h1>
         <p className="text-slate-500 text-sm sm:text-lg">{t("subtitle")}</p>
+        <div className="sm:hidden flex justify-center mt-4 pt-2">
+           <LanguageSelector currentLanguage={nativeLanguage} />
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-3 sm:gap-6">

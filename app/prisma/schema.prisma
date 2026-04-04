@@ -22,6 +22,7 @@ model User {
   
   // Custom fields
   role          String   @default("USER") // USER, ADMIN
+  nativeLanguage String?  @default("RU")
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -92,6 +93,17 @@ model Sentence {
 
   createdAt   DateTime @default(now())
   reports     Report[]
+  translations SentenceTranslation[]
+}
+
+model SentenceTranslation {
+  id         String   @id @default(cuid())
+  sentenceId String
+  language   String   // Например, "RU", "EN", "ES", "TR"
+  text       String   // Переведенный текст
+  sentence   Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+
+  @@unique([sentenceId, language])
 }
 
 model UserProgress {

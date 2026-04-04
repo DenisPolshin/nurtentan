@@ -25,7 +25,8 @@ export const {
                         where: { id: userId },
                         select: { 
                             email: true,
-                            role: true
+                            role: true,
+                            nativeLanguage: true
                         }
                     });
                     
@@ -40,6 +41,7 @@ export const {
                     const isAdmin = dbUser.role === "ADMIN" || dbUser.email === "iserviskrg@gmail.com";
                     (session.user as any).isAdmin = isAdmin;
                     (session.user as any).role = dbUser.role;
+                    (session.user as any).nativeLanguage = dbUser.nativeLanguage;
 
                 } catch (e) {
                     console.error("[Auth] Error fetching user details", e);
@@ -57,7 +59,7 @@ export const {
         if (token.sub) {
           const existingUser = await prisma.user.findUnique({
             where: { id: token.sub },
-            select: { email: true, role: true }
+            select: { email: true, role: true, nativeLanguage: true }
           });
           
           if (!existingUser) {
@@ -66,6 +68,7 @@ export const {
           
           token.isAdmin = existingUser.role === "ADMIN" || existingUser.email === "iserviskrg@gmail.com";
           token.role = existingUser.role;
+          token.nativeLanguage = existingUser.nativeLanguage;
         }
 
         return token;

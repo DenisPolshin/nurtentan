@@ -13,10 +13,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Chrome, Mail, Lock, ArrowRight, Languages } from "lucide-react";
 import Image from "next/image";
 
+import { LanguagePicker } from "@/components/language-picker";
+
 export default function LoginPage() {
   const t = useTranslations("Common");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nativeLanguage, setNativeLanguage] = useState("RU");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
   const router = useRouter();
@@ -61,7 +64,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, nativeLanguage })
       });
 
       const data = await res.json();
@@ -240,6 +243,17 @@ export default function LoginPage() {
                           />
                         </div>
                       </div>
+                      {activeTab === "register" && (
+                        <div className="space-y-2">
+                          <Label className="text-slate-700 font-medium ml-1">Выбор родного языка (Native Language)</Label>
+                          <LanguagePicker 
+                            value={nativeLanguage} 
+                            onValueChange={setNativeLanguage} 
+                            placeholder="Wähle deine Sprache"
+                            triggerClassName="h-12 bg-white border-slate-200 rounded-xl shadow-sm"
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <Button 

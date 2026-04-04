@@ -1,16 +1,14 @@
-import NextAuth from "next-auth";
-import { authConfig } from "./auth.config";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import { NextResponse } from "next/server";
-
-const { auth } = NextAuth(authConfig);
+import type { NextRequest } from "next/server";
 
 // Initialize next-intl middleware
 const intlMiddleware = createMiddleware(routing);
 
-export default auth(async (req) => {
+export default function middleware(req: NextRequest) {
   const { nextUrl } = req;
+  console.log("Middleware running for:", nextUrl.pathname);
 
   // 1. Force redirect www to non-www
   if (nextUrl.hostname.startsWith("www.")) {
@@ -30,8 +28,14 @@ export default auth(async (req) => {
 
   // 3. Let next-intl handle localization (redirects, rewriting)
   return intlMiddleware(req);
-});
+}
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  matcher: [
+    // Match all pathnames except for
+    // - API routes
+    // - _next (Next.js internals)
+    // - Static files (e.g. /favicon.ico, /vercel.svg, etc.)
+    "/((?!api|_next|.*\\..*).*)",
+  ],
 };

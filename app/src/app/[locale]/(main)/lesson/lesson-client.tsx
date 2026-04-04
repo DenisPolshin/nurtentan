@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateUserProgress } from "./actions";
-import { Flag, Loader2, CheckCircle2 } from "lucide-react";
+import { Flag, Loader2, CheckCircle2, Globe } from "lucide-react";
 import { toast } from "sonner";
 
 function normalizeAnswer(value: string) {
@@ -33,6 +33,7 @@ type Question = {
   verbOptions: string[];
   sentenceTranslation: string | null;
   sentenceId: string;
+  nativeTranslation: string | null;
 };
 
 export function LessonClient({ 
@@ -162,6 +163,54 @@ export function LessonClient({
 
   // Split sentence by "____" to insert inputs
   const parts = q.text.split("____");
+
+  const isModal = q.text.includes("muss");
+
+  const renderVerbInput = () => (
+    <div className="relative inline-flex items-center">
+      <Input 
+        ref={verbInputRef}
+        style={{ width: `calc(${Math.max(verbInput.length || 4, 4)}ch + 1.2rem)` }}
+        className={`min-w-[60px] md:min-w-[80px] text-center text-base md:text-lg h-9 md:h-11 border-2 border-b-4 rounded-lg md:rounded-xl transition-all focus-visible:ring-0 px-1.5 ${
+          isDragging 
+            ? "border-[#1cb0f6] bg-[#e1f5fe] scale-105" 
+            : "border-[#e5e5e5] bg-white"
+        } ${
+          status === "correct" ? "border-[#58cc02] text-[#58cc02]" : 
+          status === "incorrect" ? "border-[#ff4b4b] text-[#ff4b4b]" : ""
+        }`}
+        value={verbInput}
+        onChange={e => setVerbInput(e.target.value)}
+        placeholder="Verb"
+        disabled={status !== "idle"}
+        readOnly
+        autoFocus={!isModal}
+      />
+    </div>
+  );
+
+  const renderPrepInput = () => (
+    <div className="relative inline-flex items-center">
+      <Input 
+        ref={prepInputRef}
+        style={{ width: `calc(${Math.max(prepInput.length || 4, 4)}ch + 1.2rem)` }}
+        className={`min-w-[50px] md:min-w-[70px] text-center text-base md:text-lg h-9 md:h-11 border-2 border-b-4 rounded-lg md:rounded-xl transition-all focus-visible:ring-0 px-1.5 ${
+          isDragging 
+            ? "border-[#1cb0f6] bg-[#e1f5fe] scale-105" 
+            : "border-[#e5e5e5] bg-white"
+        } ${
+          status === "correct" ? "border-[#58cc02] text-[#58cc02]" : 
+          status === "incorrect" ? "border-[#ff4b4b] text-[#ff4b4b]" : ""
+        }`}
+        value={prepInput}
+        onChange={e => setPrepInput(e.target.value)}
+        placeholder="Präp."
+        disabled={status !== "idle"}
+        readOnly
+        autoFocus={isModal}
+      />
+    </div>
+  );
 
   const handleReport = async () => {
     if (isReporting || hasReported.has(q.id)) return;
@@ -294,6 +343,16 @@ export function LessonClient({
 
         <div className="space-y-8 md:space-y-12 pb-32 md:pb-10">
           <div className="flex flex-col items-start gap-5 md:gap-8">
+            
+            {q.nativeTranslation && (
+              <div className="flex items-start gap-3 bg-slate-50/80 px-4 py-3 rounded-xl border border-slate-200/60 shadow-sm max-w-2xl">
+                <Globe className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                <p className="text-slate-500 text-sm md:text-base italic leading-relaxed">
+                  {q.nativeTranslation}
+                </p>
+              </div>
+            )}
+
             {isAdmin && (
               <div className="relative">
                 <div className="bg-white rounded-xl md:rounded-2xl border-2 border-b-4 border-[#e5e5e5] p-2 md:p-3 px-4 md:px-5 text-base md:text-lg font-normal text-[#555555] shadow-sm">
@@ -305,46 +364,9 @@ export function LessonClient({
             
             <div className="text-lg md:text-xl font-normal leading-relaxed flex flex-wrap items-center gap-x-2 md:gap-x-3 gap-y-3 md:gap-y-5 text-[#1a1a1a]">
               <span>{parts[0]}</span>
-              <div className="relative inline-flex items-center">
-                <Input 
-                  ref={verbInputRef}
-                  style={{ width: `calc(${Math.max(verbInput.length || 4, 4)}ch + 1.2rem)` }}
-                  className={`min-w-[60px] md:min-w-[80px] text-center text-base md:text-lg h-9 md:h-11 border-2 border-b-4 rounded-lg md:rounded-xl transition-all focus-visible:ring-0 px-1.5 ${
-                    isDragging 
-                      ? "border-[#1cb0f6] bg-[#e1f5fe] scale-105" 
-                      : "border-[#e5e5e5] bg-white"
-                  } ${
-                    status === "correct" ? "border-[#58cc02] text-[#58cc02]" : 
-                    status === "incorrect" ? "border-[#ff4b4b] text-[#ff4b4b]" : ""
-                  }`}
-                  value={verbInput}
-                  onChange={e => setVerbInput(e.target.value)}
-                  placeholder="Verb"
-                  disabled={status !== "idle"}
-                  readOnly
-                  autoFocus
-                />
-              </div>
+              {isModal ? renderPrepInput() : renderVerbInput()}
               <span>{parts[1]}</span>
-              <div className="relative inline-flex items-center">
-                <Input 
-                  ref={prepInputRef}
-                  style={{ width: `calc(${Math.max(prepInput.length || 4, 4)}ch + 1.2rem)` }}
-                  className={`min-w-[50px] md:min-w-[70px] text-center text-base md:text-lg h-9 md:h-11 border-2 border-b-4 rounded-lg md:rounded-xl transition-all focus-visible:ring-0 px-1.5 ${
-                    isDragging 
-                      ? "border-[#1cb0f6] bg-[#e1f5fe] scale-105" 
-                      : "border-[#e5e5e5] bg-white"
-                  } ${
-                    status === "correct" ? "border-[#58cc02] text-[#58cc02]" : 
-                    status === "incorrect" ? "border-[#ff4b4b] text-[#ff4b4b]" : ""
-                  }`}
-                  value={prepInput}
-                  onChange={e => setPrepInput(e.target.value)}
-                  placeholder="Präp."
-                  disabled={status !== "idle"}
-                  readOnly
-                />
-              </div>
+              {isModal ? renderVerbInput() : renderPrepInput()}
               <span>{parts[2]}</span>
             </div>
           </div>
