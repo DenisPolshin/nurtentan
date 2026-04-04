@@ -52,7 +52,7 @@ export function LanguagePicker({ value, onValueChange, triggerClassName, placeho
           <span className="w-8 text-xs font-bold shrink-0 text-center text-slate-400">
             {l.code}
           </span>
-          <span className="flex-1 text-left leading-none pt-[1px]">
+          <span className="flex-1 text-left leading-snug">
             {l.label}
           </span>
           {value === l.value && <Check className="w-4 h-4 text-blue-600 shrink-0" />}
@@ -73,7 +73,7 @@ export function LanguagePicker({ value, onValueChange, triggerClassName, placeho
       <div className="flex items-center gap-2.5 overflow-hidden">
         <Languages className="w-4 h-4 text-slate-400 shrink-0" />
         <span className="text-[11px] font-bold text-slate-400 w-5 shrink-0">{currentLang.code}</span>
-        <span className="truncate text-slate-700 leading-none pt-[1px]">{currentLang.label}</span>
+        <span className="truncate text-slate-700 leading-snug">{currentLang.label}</span>
       </div>
       <ChevronDown className={cn("w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200", open && "rotate-180")} />
     </Button>
@@ -124,7 +124,7 @@ export function LanguagePicker({ value, onValueChange, triggerClassName, placeho
                 )}>
                   {l.code}
                 </span>
-                <span className="flex-1 text-left leading-none pt-[2px]">
+                <span className="flex-1 text-left leading-snug">
                   {l.label}
                 </span>
                 {value === l.value && (
