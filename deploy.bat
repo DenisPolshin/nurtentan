@@ -31,7 +31,7 @@ echo.
 
 :: 3. Сборка и перезапуск на сервере
 echo [3/3] Сборка проекта и перезапуск PM2...
-ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan/app && npm install && npm run build && pm2 restart kp-app'"
+ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan/app && npm install && node scripts/seed-verbs.js && node scripts/translate-sentences.js && npm run build && pm2 restart kp-app'"
 if %ERRORLEVEL% NEQ 0 (
     echo [ОШИБКА] Ошибка при сборке или перезапуске приложения.
     pause

@@ -137,7 +137,7 @@ export default function LoginPage() {
             <p className="text-xl text-slate-400 max-w-lg leading-relaxed font-medium">
               {activeTab === "login" 
                 ? "Setze dein Deutsch-Training fort und lerne alle 185 Verben mit Präpositionen." 
-                : "Tritt unserer Community bei und lerne Deutsch im Duolingo-Stil."}
+                : "Tritt unserer Community bei и lerne Deutsch mit Leichtigkeit."}
             </p>
           </motion.div>
           
@@ -147,7 +147,7 @@ export default function LoginPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            {["925+ Sätze", "A2 Level", "Gamified", "Kostenlos"].map((badge) => (
+            {["740 Sätze", "A2 Level", "Gamified", "Kostenlos"].map((badge) => (
               <div key={badge} className="px-5 py-2.5 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 text-sm font-medium text-slate-300">
                 {badge}
               </div>
@@ -245,7 +245,7 @@ export default function LoginPage() {
                       </div>
                       {activeTab === "register" && (
                         <div className="space-y-2">
-                          <Label className="text-slate-700 font-medium ml-1">Выбор родного языка (Native Language)</Label>
+                          <Label className="text-slate-700 font-medium ml-1">Wähle deine Muttersprache</Label>
                           <LanguagePicker 
                             value={nativeLanguage} 
                             onValueChange={setNativeLanguage} 

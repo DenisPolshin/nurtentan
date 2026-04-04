@@ -433,7 +433,7 @@ export function LessonClient({
         </div>
       </div>
 
-      {/* Footer Check Bar - Duolingo Style */}
+      {/* Footer Check Bar */}
       <div className={`mt-auto shrink-0 border-t-2 border-[#e5e5e5] py-4 md:py-8 px-4 md:px-10 flex items-center justify-center transition-colors duration-300 ${
         status === "correct" ? "bg-[#d7ffb8]" : status === "incorrect" ? "bg-[#ffdfe0]" : "bg-white"
       }`}>
