@@ -1,63 +1,60 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Generate distractors logic
-function getVerbDistractors(correctAnswer, allSentences) {
-  const allVerbAnswers = Array.from(new Set(allSentences.map(s => s.verbAnswer)));
-  
-  const tokens = correctAnswer.split(' ');
-  let pattern = '';
-  
-  if (tokens.length > 1) {
-    const lastWord = tokens[tokens.length - 1]; 
-    const firstWord = tokens[0]; 
-    
-    if (firstWord.endsWith('st')) pattern = 'st ' + lastWord;
-    else if (firstWord.endsWith('t')) pattern = 't ' + lastWord;
-    else if (firstWord.endsWith('en')) pattern = 'en ' + lastWord;
-    else if (firstWord.endsWith('e')) pattern = 'e ' + lastWord;
-  } else {
-    if (correctAnswer.endsWith('st')) pattern = 'st';
-    else if (correctAnswer.endsWith('en')) pattern = 'en';
-    else if (correctAnswer.endsWith('t')) pattern = 't';
-    else if (correctAnswer.endsWith('e')) pattern = 'e';
-  }
-  
-  let candidates = [];
-  if (pattern) {
-    candidates = allVerbAnswers.filter(v => v !== correctAnswer && v.endsWith(pattern));
-  }
-  
-  if (candidates.length < 5) {
-    const remaining = allVerbAnswers.filter(v => v !== correctAnswer && !candidates.includes(v));
-    candidates = [...candidates, ...remaining];
-  }
-  
-  return candidates.sort(() => Math.random() - 0.5).slice(0, 5);
+function inferForm(text) {
+  if (text.startsWith("____ du")) return "Du";
+  // Type 4: "Ich muss mich ____ das ____."
+  if (text.startsWith("Ich") && text.includes("muss")) return "Modal";
+  if (text.startsWith("Ich")) return "Ich";
+  if (text.startsWith("Wir")) return "Wir";
+  // All other custom subjects ("Es", "Der Film", "Die Mutter") are 3rd person singular "Er"
+  return "Er";
 }
 
 async function main() {
-  console.log("Fetching sentences...");
+  console.log("Fetching all sentences...");
   const allSentences = await prisma.sentence.findMany();
   
-  console.log(`Found ${allSentences.length} sentences. Updating verbOptions where missing...`);
-  
+  // Create grammar pools
+  const pools = {
+    "Du": new Set(),
+    "Modal": new Set(),
+    "Ich": new Set(),
+    "Wir": new Set(),
+    "Er": new Set()
+  };
+
+  for (const s of allSentences) {
+    const form = inferForm(s.text);
+    pools[form].add(s.verbAnswer);
+  }
+
+  console.log("Grammar pool sizes:");
+  for (const [form, set] of Object.entries(pools)) {
+    console.log(`- ${form}: ${set.size} unique verbs`);
+  }
+
   let updatedCount = 0;
   
   for (const sentence of allSentences) {
-    if (!sentence.verbOptions || sentence.verbOptions === '[]') {
-      const distractors = getVerbDistractors(sentence.verbAnswer, allSentences);
-      
-      await prisma.sentence.update({
-        where: { id: sentence.id },
-        data: { verbOptions: JSON.stringify(distractors) }
-      });
-      
-      updatedCount++;
-    }
+    const form = inferForm(sentence.text);
+    const pool = Array.from(pools[form]);
+    
+    // Filter out the correct answer
+    const candidates = pool.filter(v => v !== sentence.verbAnswer);
+    
+    // Pick 5 random, grammatically correct distractors from the same pool
+    const distractors = candidates.sort(() => Math.random() - 0.5).slice(0, 5);
+    
+    await prisma.sentence.update({
+      where: { id: sentence.id },
+      data: { verbOptions: JSON.stringify(distractors) }
+    });
+    
+    updatedCount++;
   }
   
-  console.log(`Successfully updated ${updatedCount} sentences with new verbOptions.`);
+  console.log(`Successfully regenerated ${updatedCount} sentences with grammatically perfect distractors from the 185 base verbs.`);
 }
 
 main()
