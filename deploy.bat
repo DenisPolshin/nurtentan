@@ -20,7 +20,7 @@ echo.
 
 :: 2. Выполнение команд на сервере по SSH
 echo [2/3] Подключение к серверу и обновление кода...
-ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan && git pull'"
+ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan && git reset --hard origin/main && git pull'"
 if %ERRORLEVEL% NEQ 0 (
     echo [ОШИБКА] Не удалось обновить код на сервере.
     pause

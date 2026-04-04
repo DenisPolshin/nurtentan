@@ -93,7 +93,7 @@ const akkusativVerbs = [
   ["warten", "auf"],
   ["sich wenden", "an"],
   ["sich wundern", "über"],
-  ["es handelt sich", "um"]
+  ["sich handeln", "um"]
 ];
 
 const dativVerbs = [
