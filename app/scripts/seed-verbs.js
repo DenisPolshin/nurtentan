@@ -462,7 +462,7 @@ function conjugate(infinitive, person, isModal = false) {
     else if (infinitive === "fahren") { stem = "fähr"; hasVowelChange = true; }
     else if (infinitive === "halten") { stem = "hält"; hasVowelChange = true; }
     else if (infinitive === "raten") { stem = "rät"; hasVowelChange = true; }
-    else if (infinitive === "sich verlassen") { stem = "verläss"; hasVowelChange = true; }
+    else if (infinitive === "verlassen") { stem = "verläss"; hasVowelChange = true; }
   }
 
   let ending = endings[person];
