@@ -321,6 +321,7 @@ export function LessonClient({
                   onChange={e => setVerbInput(e.target.value)}
                   placeholder="Verb"
                   disabled={status !== "idle"}
+                  readOnly
                   autoFocus
                 />
               </div>
@@ -341,6 +342,7 @@ export function LessonClient({
                   onChange={e => setPrepInput(e.target.value)}
                   placeholder="Präp."
                   disabled={status !== "idle"}
+                  readOnly
                 />
               </div>
               <span>{parts[2]}</span>
