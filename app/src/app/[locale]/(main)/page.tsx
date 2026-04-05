@@ -34,28 +34,28 @@ export default async function DashboardPage() {
   const progressPercentage = sentencesCount > 0 ? (totalPoints / sentencesCount) * 100 : 0;
 
   return (
-    <div className="space-y-4 sm:space-y-8 pb-40 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+    <div className="space-y-3 sm:space-y-8 pb-20 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500 relative flex flex-col justify-center min-h-[calc(100dvh-6rem)]">
       <div className="absolute top-0 right-0 z-10 hidden sm:block">
         <LanguageSelector currentLanguage={nativeLanguage} />
       </div>
 
-      <div className="text-center space-y-1 sm:space-y-2">
+      <div className="text-center space-y-0.5 sm:space-y-2 mt-2 sm:mt-0">
         <h1 className="text-2xl sm:text-4xl font-bold text-slate-800">{t("title")}</h1>
         <p className="text-slate-500 text-sm sm:text-lg">{t("subtitle")}</p>
-        <div className="sm:hidden flex justify-center mt-4 pt-2">
+        <div className="sm:hidden flex justify-center mt-2 pt-1">
            <LanguageSelector currentLanguage={nativeLanguage} />
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-3 sm:gap-6">
+      <div className="grid md:grid-cols-2 gap-3 sm:gap-6 mt-2">
         <Card className="border-2 border-green-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center space-y-3 sm:space-y-4">
+          <CardContent className="p-3 sm:p-6 flex flex-col items-center text-center space-y-2 sm:space-y-4">
             <div className="hidden sm:flex w-16 h-16 bg-green-100 rounded-full items-center justify-center">
               <span className="text-2xl font-bold text-green-600">A</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">{t("akkusativ")}</h2>
+            <h2 className="text-lg sm:text-2xl font-bold text-slate-800">{t("akkusativ")}</h2>
             <Link href="/lesson?type=akkusativ" className="w-full">
-              <Button size="lg" className="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-sm hover:shadow-md h-12 sm:h-14 text-base sm:text-lg">
+              <Button size="lg" className="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-sm hover:shadow-md h-11 sm:h-14 text-base sm:text-lg">
                 {c("start")}
               </Button>
             </Link>
@@ -63,13 +63,13 @@ export default async function DashboardPage() {
         </Card>
 
         <Card className="border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center space-y-3 sm:space-y-4">
+          <CardContent className="p-3 sm:p-6 flex flex-col items-center text-center space-y-2 sm:space-y-4">
             <div className="hidden sm:flex w-16 h-16 bg-blue-100 rounded-full items-center justify-center">
               <span className="text-2xl font-bold text-blue-600">D</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">{t("dativ")}</h2>
+            <h2 className="text-lg sm:text-2xl font-bold text-slate-800">{t("dativ")}</h2>
             <Link href="/lesson?type=dativ" className="w-full">
-              <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-sm hover:shadow-md h-12 sm:h-14 text-base sm:text-lg">
+              <Button size="lg" className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-sm hover:shadow-md h-11 sm:h-14 text-base sm:text-lg">
                 {c("start")}
               </Button>
             </Link>
@@ -78,14 +78,14 @@ export default async function DashboardPage() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-40 sm:static">
-        <div className="mx-auto w-full max-w-4xl px-4 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 sm:px-0 sm:pb-0 sm:pt-0">
+        <div className="mx-auto w-full max-w-4xl px-4 pb-[env(safe-area-inset-bottom)] pt-1 sm:px-0 sm:pb-0 sm:pt-0">
           <Card className="border-2 border-slate-200 shadow-sm bg-slate-50/95 backdrop-blur-sm">
-            <CardContent className="px-3 py-2.5 sm:p-6">
-              <div className="flex flex-row items-center justify-between mb-2 sm:mb-4 gap-2">
+            <CardContent className="px-3 py-2 sm:p-6">
+              <div className="flex flex-row items-center justify-between mb-1.5 sm:mb-4 gap-2">
                 <h3 className="text-base sm:text-xl font-bold text-slate-800 shrink-0">{t("progress")}</h3>
                 <span className="text-xs sm:text-base text-slate-500 font-medium truncate text-right">{totalPoints} / {sentencesCount} {t("sentences_learned")}</span>
               </div>
-              <div className="h-3 sm:h-4 w-full bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-2.5 sm:h-4 w-full bg-slate-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-yellow-400 rounded-full transition-all duration-1000"
                   style={{ width: `${progressPercentage}%` }}
