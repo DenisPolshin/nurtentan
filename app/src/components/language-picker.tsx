@@ -15,6 +15,7 @@ export const languages = [
   { value: "SQ", label: "Shqip", flag: "🇦🇱", code: "SQ" },
   { value: "UK", label: "Українська", flag: "🇺🇦", code: "UK" },
   { value: "PL", label: "Polski", flag: "🇵🇱", code: "PL" },
+  { value: "HU", label: "Magyar", flag: "🇭🇺", code: "HU" },
 ];
 
 interface LanguagePickerProps {
@@ -97,7 +98,7 @@ export function LanguagePicker({ value, onValueChange, triggerClassName, placeho
       <DrawerTrigger asChild>
         {Trigger}
       </DrawerTrigger>
-      <DrawerContent className="p-0 rounded-t-[32px] border-none outline-none max-h-[85vh] bg-white">
+      <DrawerContent className="p-0 rounded-t-[32px] border-none outline-none max-h-[85dvh] bg-white">
         <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-slate-200" />
         <DrawerHeader className="px-6 pt-6 pb-4">
           <DrawerTitle className="text-left text-2xl font-bold text-slate-900">

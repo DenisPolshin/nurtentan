@@ -102,7 +102,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white overflow-hidden">
+    <div className="min-h-[100dvh] w-full flex flex-col md:flex-row bg-white overflow-hidden">
       {/* Left Side: Decorative Background (Abstract/Geometric) */}
       <div className="hidden md:flex md:w-1/2 relative bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -223,7 +223,7 @@ export default function LoginPage() {
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="pl-10 h-12 bg-white border-slate-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all shadow-sm"
+                            className="text-base md:text-sm pl-10 h-12 bg-white border-slate-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all shadow-sm"
                           />
                         </div>
                       </div>
@@ -239,7 +239,7 @@ export default function LoginPage() {
                             minLength={6}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="pl-10 h-12 bg-white border-slate-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all shadow-sm"
+                            className="text-base md:text-sm pl-10 h-12 bg-white border-slate-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all shadow-sm"
                           />
                         </div>
                       </div>

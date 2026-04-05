@@ -15,7 +15,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-[100dvh] flex-col bg-slate-50">
       <header className="border-b bg-white sticky top-0 z-50 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">

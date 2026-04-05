@@ -9,7 +9,8 @@ const TARGET_LANGUAGES = {
   "SR": "sr", // Serbian
   "SQ": "sq", // Albanian
   "UK": "uk", // Ukrainian
-  "PL": "pl"  // Polish
+  "PL": "pl", // Polish
+  "HU": "hu"  // Hungarian
 };
 
 async function main() {

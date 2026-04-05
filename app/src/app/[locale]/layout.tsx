@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "DeutschLernen – Deutsche Verben mit Präpositionen",
   description: "Lerne deutsche Verben mit Präpositionen (Akkusativ/Dativ) auf A2-Niveau.",
+  other: {
+    google: "notranslate",
+  },
 };
  
 export default async function LocaleLayout({
@@ -40,8 +43,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
  
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+    <html lang={locale} translate="no" className="notranslate" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           {children}
           <Toaster position="top-center" richColors />

@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  const languages = ["RU", "TR", "SR", "SQ", "UK", "PL"];
+  const languages = ["RU", "TR", "SR", "SQ", "UK", "PL", "HU"];
   
   for (const lang of languages) {
     console.log(`\n--- SAMPLE FOR ${lang} ---`);
