@@ -101,6 +101,23 @@ server {
 
   client_max_body_size 20m;
 
+  # ПРОВЕРКА ФЛАГА ТЕХНИЧЕСКИХ РАБОТ
+  set $maintenance 0;
+  if (-f /opt/nurtentan/maintenance.flag) {
+    set $maintenance 1;
+  }
+  
+  # Если флаг есть и мы не в папке /public, возвращаем 503
+  if ($maintenance = 1) {
+    return 503;
+  }
+
+  error_page 503 @maintenance;
+  location @maintenance {
+    root /opt/nurtentan;
+    rewrite ^(.*)$ /maintenance.html break;
+  }
+
   location / {
     proxy_pass http://127.0.0.1:3005;
     proxy_http_version 1.1;

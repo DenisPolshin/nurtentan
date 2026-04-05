@@ -1,49 +1,49 @@
 @echo off
-chcp 65001 >nul
+set SERVER_IP=212.227.191.121
+set PROJECT_DIR=/opt/nurtentan
+set SSH_KEY="%USERPROFILE%\.ssh\id_ed25519"
+
 echo =======================================================
-echo                 АВТОМАТИЧЕСКИЙ ДЕПЛОЙ                  
+echo                 AUTOMATIC DEPLOY
 echo =======================================================
 echo.
+echo [!] ATTENTION: Maintenance mode will be enabled.
+echo.
 
-:: 1. Проверка изменений и пуш в GitHub
-echo [1/3] Отправка изменений в GitHub...
+:: 1. Git push
+echo [1/3] Sending changes to GitHub...
 git add .
 git commit -m "Auto-deploy update"
 git push
-if %ERRORLEVEL% NEQ 0 (
-    echo [ОШИБКА] Не удалось отправить изменения в GitHub. Проверьте git status.
-    pause
-    exit /b %ERRORLEVEL%
-)
-echo [OK] Изменения отправлены.
+echo [OK] Changes sent.
 echo.
 
-:: 2. Выполнение команд на сервере по SSH
-echo [2/3] Подключение к серверу и обновление кода...
-:: Включаем режим обслуживания (создаем флаг maintenance.flag)
-ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "touch /opt/nurtentan/maintenance.flag && bash -c 'cd /opt/nurtentan && git reset --hard origin/main && git pull'"
+:: 2. Enable maintenance and update code
+echo [2/3] Enabling maintenance and updating code on server...
+ssh -i %SSH_KEY% -o IdentitiesOnly=yes -o PasswordAuthentication=no root@%SERVER_IP% "touch %PROJECT_DIR%/maintenance.flag && cd %PROJECT_DIR% && git reset --hard origin/main && git pull"
 if %ERRORLEVEL% NEQ 0 (
-    echo [ОШИБКА] Не удалось обновить код на сервере.
+    echo [ERROR] Failed to update code on server.
     pause
     exit /b %ERRORLEVEL%
 )
-echo [OK] Код на сервере обновлен.
+echo [OK] Maintenance enabled. Code updated.
 echo.
 
-:: 3. Сборка и перезапуск на сервере
-echo [3/3] Сборка проекта и перезапуск PM2...
-:: Выполняем все команды деплоя и в самом конце удаляем флаг maintenance.flag
-ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan/app && npm install && node scripts/seed-verbs.js && node scripts/translate-sentences.js && npm run build && pm2 restart kp-app' && rm -f /opt/nurtentan/maintenance.flag"
+:: 3. Build and restart
+echo [3/3] Building project and restarting application...
+ssh -i %SSH_KEY% -o IdentitiesOnly=yes -o PasswordAuthentication=no root@%SERVER_IP% "bash -c 'cd %PROJECT_DIR%/app && npm install && node scripts/seed-verbs.js && node scripts/translate-sentences.js && npm run build && pm2 restart kp-app' && rm -f %PROJECT_DIR%/maintenance.flag"
 if %ERRORLEVEL% NEQ 0 (
-    echo [ОШИБКА] Ошибка при сборке или перезапуске приложения.
+    echo [ERROR] Error during build or restart.
     pause
     exit /b %ERRORLEVEL%
 )
-echo [OK] Приложение успешно собрано и перезапущено!
+echo [OK] Project built and restarted!
+echo [OK] Maintenance disabled.
 echo.
 
 echo =======================================================
-echo                  ДЕПЛОЙ ЗАВЕРШЕН                       
+echo                  DEPLOY COMPLETED
 echo =======================================================
-echo Проверьте сайт: https://nurtentan.de
+echo Site: https://nurtentan.de
+echo.
 pause
