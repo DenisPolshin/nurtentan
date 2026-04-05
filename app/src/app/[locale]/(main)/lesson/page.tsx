@@ -64,6 +64,7 @@ export default async function LessonPage({
       verbOptions: s.verbOptions ? JSON.parse(s.verbOptions) : [],
       sentenceTranslation: s.translation, // Original german translation
       sentenceId: s.id,
+      id: s.id, // Using sentenceId as unique identifier for the lesson queue
       nativeTranslation: null as string | null,
     }))
   );

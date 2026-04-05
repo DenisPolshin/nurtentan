@@ -81,9 +81,9 @@ export default async function DashboardPage() {
         <div className="mx-auto w-full max-w-4xl px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:px-0 sm:pb-0">
           <Card className="border-2 border-slate-200 shadow-sm bg-slate-50/95 backdrop-blur-sm">
             <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-2 sm:mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-4 gap-1">
                 <h3 className="text-lg sm:text-xl font-bold text-slate-800">{t("progress")}</h3>
-                <span className="text-sm sm:text-base text-slate-500 font-medium">{totalPoints} / {sentencesCount} {t("sentences_learned")}</span>
+                <span className="text-sm sm:text-base text-slate-500 font-medium truncate w-full sm:w-auto text-left sm:text-right">{totalPoints} / {sentencesCount} {t("sentences_learned")}</span>
               </div>
               <div className="h-3 sm:h-4 w-full bg-slate-200 rounded-full overflow-hidden">
                 <div

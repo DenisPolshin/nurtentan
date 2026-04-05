@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateUserProgress } from "./actions";
-import { Flag, Loader2, CheckCircle2, Globe } from "lucide-react";
+import { Flag, Loader2, CheckCircle2, Globe, Target, Award, Star } from "lucide-react";
 import { toast } from "sonner";
 
 function normalizeAnswer(value: string) {
@@ -95,63 +95,78 @@ export function LessonClient({
   if (initialQuestions.length === 0) return <div>Keine Fragen</div>;
 
   if (currentIndex >= queue.length) {
-    const accuracy = Math.round((firstTryCorrectIds.size / initialQuestions.length) * 100);
+    const totalQuestions = initialQuestions.length;
+    const correctFirstTry = firstTryCorrectIds.size;
+    const accuracy = Math.round((correctFirstTry / totalQuestions) * 100) || 0;
+    const basePoints = totalQuestions * 10;
+    const bonusPoints = correctFirstTry * 5;
+    const totalPoints = basePoints + bonusPoints;
+
     return (
-      <div className="flex flex-col items-center justify-center min-h-[80dvh] px-4">
+      <div className="flex flex-col items-center justify-center min-h-[80dvh] px-4 py-8">
         <motion.div 
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", damping: 12 }}
-          className="text-center space-y-8 w-full max-w-lg"
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: "spring", damping: 20, stiffness: 100 }}
+          className="w-full max-w-md bg-white rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden"
         >
-          <h1 className="text-5xl font-medium text-[#58cc02] drop-shadow-sm mb-12">
-            {t.lesson_complete}!
-          </h1>
-
-          <div className="grid grid-cols-2 gap-6">
-            <motion.div
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-3xl border-2 border-b-8 border-[#ffc800] p-6 text-center shadow-lg"
+          <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 text-center text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 opacity-10 translate-x-1/4 -translate-y-1/4">
+              <Star className="w-48 h-48" />
+            </div>
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              className="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm"
             >
-              <div className="text-[#ffc800] text-lg font-bold uppercase mb-2 tracking-wider">
-                {t.accuracy}
-              </div>
-              <div className="text-4xl font-bold text-[#1a1a1a]">
-                {accuracy}%
-              </div>
+              <CheckCircle2 className="w-10 h-10 text-white" />
             </motion.div>
-
-            <motion.div
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white rounded-3xl border-2 border-b-8 border-[#1cb0f6] p-6 text-center shadow-lg"
-            >
-              <div className="text-[#1cb0f6] text-lg font-bold uppercase mb-2 tracking-wider">
-                Punkte
-              </div>
-              <div className="text-4xl font-bold text-[#1a1a1a]">
-                {completedIds.size * 10}
-              </div>
-            </motion.div>
+            <h1 className="text-3xl font-bold tracking-tight mb-2 relative z-10">
+              {t.lesson_complete}
+            </h1>
+            <p className="text-green-50 font-medium relative z-10">
+              Du hast es geschafft!
+            </p>
           </div>
 
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="pt-12"
-          >
+          <div className="p-8 space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex flex-col items-center justify-center gap-2">
+                <Target className="w-6 h-6 text-blue-500 mb-1" />
+                <div className="text-sm font-semibold text-slate-500 uppercase tracking-wide">
+                  {t.accuracy}
+                </div>
+                <div className="text-3xl font-black text-slate-800">
+                  {accuracy}%
+                </div>
+                <div className="text-xs text-slate-400 font-medium text-center leading-tight">
+                  {correctFirstTry} von {totalQuestions} <br/> beim ersten Versuch
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex flex-col items-center justify-center gap-2">
+                <Award className="w-6 h-6 text-amber-500 mb-1" />
+                <div className="text-sm font-semibold text-slate-500 uppercase tracking-wide">
+                  Punkte
+                </div>
+                <div className="text-3xl font-black text-slate-800">
+                  {totalPoints}
+                </div>
+                <div className="text-xs text-amber-500 font-medium text-center leading-tight">
+                  {basePoints} Basis <br/> +{bonusPoints} Bonus
+                </div>
+              </div>
+            </div>
+
             <Button 
               size="lg" 
-              className="w-full h-16 text-xl font-bold uppercase tracking-widest bg-[#58cc02] hover:bg-[#46a302] border-b-8 border-[#46a302] active:border-b-0 active:translate-y-2 rounded-2xl transition-all shadow-md"
+              className="w-full h-14 text-lg font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-md transition-all active:scale-[0.98]"
               onClick={() => router.push("/")}
             >
               {t.continue}
             </Button>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     );
@@ -336,16 +351,16 @@ export function LessonClient({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col pt-4 md:pt-8 max-w-2xl mx-auto w-full overflow-y-auto no-scrollbar px-4">
-        <h2 className="text-xl md:text-2xl font-medium text-[#1a1a1a] mb-6 md:mb-10 tracking-tight">
+      <div className="flex-1 flex flex-col pt-4 md:pt-8 max-w-2xl mx-auto w-full overflow-y-auto overflow-x-hidden no-scrollbar px-4">
+        <h2 className="text-xl md:text-2xl font-medium text-[#1a1a1a] mb-4 md:mb-10 tracking-tight">
           {t.fill_blanks}
         </h2>
 
-        <div className="space-y-8 md:space-y-12 pb-32 md:pb-10">
-          <div className="flex flex-col items-start gap-5 md:gap-8">
+        <div className="space-y-6 md:space-y-12 pb-10 md:pb-10">
+          <div className="flex flex-col gap-4 md:gap-8 w-full">
             
             {q.nativeTranslation && (
-              <div className="flex items-start gap-3 bg-slate-50/80 px-4 py-3 rounded-xl border border-slate-200/60 shadow-sm max-w-2xl">
+              <div className="flex items-start gap-3 bg-slate-50/80 px-4 py-3 rounded-xl border border-slate-200/60 shadow-sm max-w-2xl w-full">
                 <Globe className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
                 <p className="text-slate-500 text-sm md:text-base italic leading-relaxed">
                   {q.nativeTranslation}
@@ -354,7 +369,7 @@ export function LessonClient({
             )}
 
             {isAdmin && (
-              <div className="relative">
+              <div className="relative self-start">
                 <div className="bg-white rounded-xl md:rounded-2xl border-2 border-b-4 border-[#e5e5e5] p-2 md:p-3 px-4 md:px-5 text-base md:text-lg font-normal text-[#555555] shadow-sm">
                   {q.infinitive} + {q.preposition}
                 </div>
@@ -362,12 +377,12 @@ export function LessonClient({
               </div>
             )}
             
-            <div className="text-lg md:text-xl font-normal leading-relaxed flex flex-wrap items-center gap-x-2 md:gap-x-3 gap-y-3 md:gap-y-5 text-[#1a1a1a]">
-              <span>{parts[0]}</span>
+            <div className="text-lg md:text-xl font-normal leading-relaxed flex flex-wrap items-center gap-x-2 md:gap-x-3 gap-y-3 md:gap-y-5 text-[#1a1a1a] w-full break-words">
+              <span className="break-words min-w-0">{parts[0]}</span>
               {isModal ? renderPrepInput() : renderVerbInput()}
-              <span>{parts[1]}</span>
+              <span className="break-words min-w-0">{parts[1]}</span>
               {isModal ? renderVerbInput() : renderPrepInput()}
-              <span>{parts[2]}</span>
+              <span className="break-words min-w-0">{parts[2]}</span>
             </div>
           </div>
 
@@ -472,27 +487,27 @@ export function LessonClient({
                 animate={{ opacity: 1 }}
                 className="w-full flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8"
               >
-                <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
-                  <div className={`w-10 h-10 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white text-xl md:text-3xl font-medium shrink-0 shadow-md ${
+                <div className="flex items-start md:items-center gap-3 md:gap-6 w-full md:w-auto">
+                  <div className={`w-10 h-10 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white text-xl md:text-3xl font-medium shrink-0 shadow-md mt-1 md:mt-0 ${
                     status === "correct" ? "bg-[#58cc02]" : "bg-[#ff4b4b]"
                   }`}>
                     {status === "correct" ? "✓" : "✗"}
                   </div>
-                  <div className="space-y-0.5 overflow-hidden">
+                  <div className="flex-1 space-y-1 overflow-hidden min-w-0">
                     <h3 className={`text-xl md:text-2xl font-medium ${
                       status === "correct" ? "text-[#58cc02]" : "text-[#ff4b4b]"
                     }`}>
                       {status === "correct" ? t.correct : t.incorrect}
                     </h3>
                     {status === "incorrect" && (
-                      <div className="flex items-center gap-4">
-                        <div className="text-[#ff4b4b] text-base md:text-lg font-medium">
+                      <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-1">
+                        <div className="text-[#ff4b4b] text-sm md:text-lg font-medium">
                           Richtig: <span className="underline font-bold">{q.verbAnswer} {q.prepAnswer}</span>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 gap-1.5 text-[#ff4b4b] hover:bg-[#ff4b4b]/10 hover:text-[#ff4b4b] rounded-lg border border-[#ff4b4b]/20"
+                          className="h-7 md:h-8 px-2 md:px-3 gap-1 md:gap-1.5 text-[#ff4b4b] hover:bg-[#ff4b4b]/10 hover:text-[#ff4b4b] rounded-lg border border-[#ff4b4b]/20"
                           onClick={handleReport}
                           disabled={isReporting || hasReported.has(q.id)}
                         >
@@ -510,7 +525,7 @@ export function LessonClient({
                       </div>
                     )}
                     {q.sentenceTranslation && (
-                      <p className={`text-sm md:text-lg font-normal ${
+                      <p className={`text-sm md:text-lg font-normal break-words mt-1 leading-snug ${
                         status === "correct" ? "text-[#58cc02]" : "text-[#ff4b4b]"
                       }`}>
                         "{q.sentenceTranslation}"
