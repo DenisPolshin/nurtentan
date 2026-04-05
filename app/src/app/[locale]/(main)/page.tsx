@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   const progressPercentage = sentencesCount > 0 ? (totalPoints / sentencesCount) * 100 : 0;
 
   return (
-    <div className="space-y-4 sm:space-y-8 pb-24 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+    <div className="space-y-4 sm:space-y-8 pb-40 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
       <div className="absolute top-0 right-0 z-10 hidden sm:block">
         <LanguageSelector currentLanguage={nativeLanguage} />
       </div>
@@ -78,9 +78,9 @@ export default async function DashboardPage() {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-40 sm:static">
-        <div className="mx-auto w-full max-w-4xl px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] sm:px-0 sm:pb-0">
+        <div className="mx-auto w-full max-w-4xl px-4 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 sm:px-0 sm:pb-0 sm:pt-0">
           <Card className="border-2 border-slate-200 shadow-sm bg-slate-50/95 backdrop-blur-sm">
-            <CardContent className="p-3 sm:p-6">
+            <CardContent className="px-3 py-2.5 sm:p-6">
               <div className="flex flex-row items-center justify-between mb-2 sm:mb-4 gap-2">
                 <h3 className="text-base sm:text-xl font-bold text-slate-800 shrink-0">{t("progress")}</h3>
                 <span className="text-xs sm:text-base text-slate-500 font-medium truncate text-right">{totalPoints} / {sentencesCount} {t("sentences_learned")}</span>
