@@ -20,7 +20,8 @@ echo.
 
 :: 2. Выполнение команд на сервере по SSH
 echo [2/3] Подключение к серверу и обновление кода...
-ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan && git reset --hard origin/main && git pull'"
+:: Включаем режим обслуживания (создаем флаг maintenance.flag)
+ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "touch /opt/nurtentan/maintenance.flag && bash -c 'cd /opt/nurtentan && git reset --hard origin/main && git pull'"
 if %ERRORLEVEL% NEQ 0 (
     echo [ОШИБКА] Не удалось обновить код на сервере.
     pause
@@ -31,7 +32,8 @@ echo.
 
 :: 3. Сборка и перезапуск на сервере
 echo [3/3] Сборка проекта и перезапуск PM2...
-ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan/app && npm install && node scripts/seed-verbs.js && node scripts/translate-sentences.js && npm run build && pm2 restart kp-app'"
+:: Выполняем все команды деплоя и в самом конце удаляем флаг maintenance.flag
+ssh -i "%USERPROFILE%\.ssh\id_ed25519" -o IdentitiesOnly=yes -o PasswordAuthentication=no root@212.227.191.121 "bash -c 'cd /opt/nurtentan/app && npm install && node scripts/seed-verbs.js && node scripts/translate-sentences.js && npm run build && pm2 restart kp-app' && rm -f /opt/nurtentan/maintenance.flag"
 if %ERRORLEVEL% NEQ 0 (
     echo [ОШИБКА] Ошибка при сборке или перезапуске приложения.
     pause
